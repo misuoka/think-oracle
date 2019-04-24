@@ -1,0 +1,22 @@
+{
+    "name": "misuoka/think-oracle",
+    "description": "用于 thinkphp5.1 框架上的基于 OCI 的 Oracle 数据库驱动",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "misuoka",
+            "email": "125158612@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "topthink/framework": "~5.1.20",
+        "misuoka/ocipdo": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\oracle\\" : "src"
+        }
+    }
+}
