@@ -17,7 +17,7 @@ use think\db\Expression;
 use think\db\Where;
 use think\Exception;
 use think\model\relation\OneToOne;
-use think\oracle\Connection;
+use think\oci\Connection;
 use think\Loader;
 
 class Query
