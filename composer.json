@@ -1,6 +1,7 @@
 {
     "name": "misuoka/think-oci",
     "description": "用于 thinkphp5.1 框架上的基于 OCI 的 Oracle 数据库驱动",
+    "keywords": ["oracle", "oci", "pdo", "pdo_oci", "thinkphp", "thihnkphp5", "topthink"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -9,7 +10,6 @@
             "email": "125158612@qq.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "topthink/framework": "~5.1.20",
         "misuoka/ocipdo": "dev-master"
