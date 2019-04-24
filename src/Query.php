@@ -9,7 +9,7 @@
  * @LastEditTime: 2019-04-24 16:08:17
  */
 
-namespace think\oracle;
+namespace think\oci;
 
 use think\Db;
 use think\Collection;
