@@ -9,7 +9,7 @@
  * @LastEditTime: 2019-04-24 17:30:48
  */
 
-namespace think\oracle;
+namespace think\oci;
 
 use ocipdo\PDO as OCIPDO;
 use think\Container;
@@ -62,7 +62,7 @@ class Connection
     protected static $info = [];
 
     // 使用Builder类
-    protected $builderClassName = '\\think\\oracle\\Builder';
+    protected $builderClassName = '\\think\\oci\\Builder';
     // Builder对象
     protected $builder;
     // 数据库连接参数配置
@@ -114,9 +114,9 @@ class Connection
         // 是否需要进行SQL性能分析
         'sql_explain'     => false,
         // Builder类
-        'builder'         => '\\think\\oracle\\Builder',
+        'builder'         => '\\think\\oci\\Builder',
         // Query类
-        'query'           => '\\think\\oracle\\Query',
+        'query'           => '\\think\\oci\\Query',
         // 是否需要断线重连
         'break_reconnect' => false,
         // 断线标识字符串
