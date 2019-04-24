@@ -9,7 +9,7 @@
  * @LastEditTime: 2019-04-24 11:34:06
  */
 
-namespace think\oracle;
+namespace think\oci;
 
 use think\Exception;
 use think\db\Expression;
