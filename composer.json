@@ -10,7 +10,6 @@
             "email": "125158612@qq.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "topthink/framework": "~5.1.20",
         "misuoka/ocipdo": "~0.1.1"
