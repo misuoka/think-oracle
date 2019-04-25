@@ -1,5 +1,7 @@
 .idea
+database.php
 .vscode/
+log/
 vendor/
-test/
+oldtest/
 composer.lock

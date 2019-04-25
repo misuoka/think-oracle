@@ -1,0 +1,11 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuites>
+        <testsuite name="service">
+            <file>test/CreateTest.php</file>
+            <file>test/InsertTest.php</file>
+            <!-- <file>test/UpdateTest.php</file> -->
+            <!-- <file>test/SelectTest.php</file> -->
+            <!-- <file>test/DeleteTest.php</file> -->
+        </testsuite>
+    </testsuites>
+</phpunit>
