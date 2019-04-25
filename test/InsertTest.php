@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . './../vendor/autoload.php';
 require_once dirname(__FILE__) . '/../vendor/topthink/framework/base.php';
 $myconfig = require dirname(__FILE__) . '/../database.php'; // 加载数据库配置
 
@@ -14,8 +14,8 @@ $config = [
     'hostport'        => $myconfig['hostport'],
     'database'        => $myconfig['database'],
     'debug'           => true,
-    'query'           => '\\think\\oci\\Query',
-    'type'            => '\\think\\oci\\Connection',
+    'query'           => '\\misuoka\\think\\Query',
+    'type'            => '\\misuoka\\think\\Oracle',
     'prefix'          => 'mdbtb_',
     'prefix_sequence' => 'mdbts_',
 ];

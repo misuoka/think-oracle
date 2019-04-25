@@ -9,10 +9,8 @@
  * @LastEditTime: 2019-04-25 10:24:31
  */
 
-namespace think\oci;
+namespace misuoka\think;  // 原命名空间为 think\oracle，但与官方的库存在冲突
 
-// use think\Exception;
-// use think\db\Expression;
 use think\db\Builder as BaseBuilder;
 
 class Builder extends BaseBuilder

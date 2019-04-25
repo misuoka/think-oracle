@@ -8,14 +8,14 @@ use think\Db;
 use think\facade\Config;
 
 $config = [
-    'useROLE_NAME'        => $myconfig['useROLE_NAME'],
+    'username'        => $myconfig['username'],
     'password'        => $myconfig['password'],
     'hostname'        => $myconfig['hostname'],
     'hostport'        => $myconfig['hostport'],
     'database'        => $myconfig['database'],
     'debug'           => true,
-    'query'           => '\\think\\oci\\Query',
-    'type'            => '\\think\\oci\\Connection',
+    'query'           => '\\misuoka\\think\\Query',
+    'type'            => '\\misuoka\\think\\Oracle',
     'prefix'          => 'mdbtb_',
     'prefix_sequence' => 'mdbts_',
 ];

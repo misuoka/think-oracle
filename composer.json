@@ -1,7 +1,7 @@
 {
-    "name": "misuoka/think-oci",
+    "name": "misuoka/think-oracle",
     "description": "用于 thinkphp5.1 框架上的基于 OCI 的 Oracle 数据库驱动",
-    "keywords": ["oracle", "oci", "pdo", "pdo_oci", "thinkphp", "thihnkphp5", "topthink"],
+    "keywords": ["oracle", "oci", "pdo", "pdo_oci", "thinkphp", "thihnkphp5", "topthink", "think-oracle", "think-oci"],
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "think\\oci\\" : "src"
+            "misuoka\\think\\" : "src"
         }
     }
 }

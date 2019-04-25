@@ -9,30 +9,30 @@
  * @LastEditTime: 2019-04-25 10:51:59
  */
 
-namespace think\oci;
+namespace misuoka\think; //
 
+use misuoka\think\Query;
 use ocipdo\PDO as OCIPDO;
 use think\Container;
 use think\Db;
+use think\db\Connection as BaseConnection;
 use think\Exception;
-use think\exception\DbException;
 use think\exception\PDOException;
 use \PDO;
-use think\db\Connection as BaseConnection;
-use think\oci\Query;
+
 /**
  *  连接类
  */
-class Connection extends BaseConnection
+class Oracle extends BaseConnection
 {
     // 使用Builder类
-    protected $builderClassName = '\\think\\oci\\Builder';
+    protected $builderClassName = '\\misuoka\\think\\Builder';
     // Builder对象
     protected $builder;
     // 数据库连接参数配置
     protected $config = [
         // 数据库类型
-        'type'            => 'oracle',
+        'type'            => '\\misuoka\\think\\Oracle',
         // 服务器地址
         'hostname'        => '',
         // 数据库名
@@ -78,9 +78,9 @@ class Connection extends BaseConnection
         // 是否需要进行SQL性能分析
         'sql_explain'     => false,
         // Builder类
-        'builder'         => '\\think\\oci\\Builder',
+        'builder'         => '\\misuoka\\think\\Builder',
         // Query类
-        'query'           => '\\think\\oci\\Query',
+        'query'           => '\\misuoka\\think\\Query',
         // 是否需要断线重连
         'break_reconnect' => false,
         // 断线标识字符串
@@ -158,7 +158,7 @@ class Connection extends BaseConnection
                 $name = md5(serialize($config));
             }
 
-            self::$instance[$name] = new static($options); // 直接创建
+            self::$instance[$name] = new static($options); // 直接创建自己
         }
 
         return self::$instance[$name];
@@ -173,6 +173,7 @@ class Connection extends BaseConnection
     {
         return $this->builderClassName;
     }
+
     /**
      * 解析Oracle oci的连接字符串connection_string
      * @access protected
@@ -335,7 +336,7 @@ class Connection extends BaseConnection
     }
 
     /**
-     * 获取字段绑定类型 TODO:
+     * 获取字段绑定类型 
      * @access public
      * @param  string $type 字段类型
      * @return integer
@@ -414,84 +415,6 @@ class Connection extends BaseConnection
         }
 
         return $fetch ? self::$info[$schema][$fetch] : self::$info[$schema];
-    }
-
-    /**
-     * 获取数据表的主键
-     * @access public
-     * @param  string $tableName 数据表名
-     * @return string|array
-     */
-    public function getPk($tableName)
-    {
-        return $this->getTableInfo($tableName, 'pk');
-    }
-
-    /**
-     * 获取数据表字段信息
-     * @access public
-     * @param  string $tableName 数据表名
-     * @return array
-     */
-    public function getTableFields($tableName)
-    {
-        return $this->getTableInfo($tableName, 'fields');
-    }
-
-    /**
-     * 获取数据表字段类型
-     * @access public
-     * @param  string $tableName 数据表名
-     * @param  string $field    字段名
-     * @return array|string
-     */
-    public function getFieldsType($tableName, $field = null)
-    {
-        $result = $this->getTableInfo($tableName, 'type');
-
-        if ($field && isset($result[$field])) {
-            return $result[$field];
-        }
-
-        return $result;
-    }
-
-    /**
-     * 获取数据表绑定信息
-     * @access public
-     * @param  string $tableName 数据表名
-     * @return array
-     */
-    public function getFieldsBind($tableName)
-    {
-        return $this->getTableInfo($tableName, 'bind');
-    }
-
-    /**
-     * 获取数据库的配置参数
-     * @access public
-     * @param  string $config 配置名称
-     * @return mixed
-     */
-    public function getConfig($config = '')
-    {
-        return $config ? $this->config[$config] : $this->config;
-    }
-
-    /**
-     * 设置数据库的配置参数
-     * @access public
-     * @param  string|array      $config 配置名称
-     * @param  mixed             $value 配置值
-     * @return void
-     */
-    public function setConfig($config, $value = '')
-    {
-        if (is_array($config)) {
-            $this->config = array_merge($this->config, $config);
-        } else {
-            $this->config[$config] = $value;
-        }
     }
 
     /**
@@ -769,7 +692,6 @@ class Connection extends BaseConnection
             throw $e;
         }
     }
-
 
     /**
      * 插入记录

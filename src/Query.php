@@ -9,17 +9,8 @@
  * @LastEditTime: 2019-04-25 10:12:00
  */
 
-namespace think\oci;
+namespace misuoka\think;
 
-
-// use think\Db;
-// use think\Collection;
-// use think\db\Expression;
-// use think\db\Where;
-// use think\Exception;
-// use think\model\relation\OneToOne;
-// use think\oci\Connection;
-// use think\Loader;
 use think\db\Query as BaseQuery;
 
 class Query extends BaseQuery
@@ -62,7 +53,7 @@ class Query extends BaseQuery
      *
      * @param Connection $connection 数据库对象实例，可空
      */
-    public function __construct(Connection $connection = null)
+    public function __construct(\think\db\Connection $connection = null)
     {
         if (is_null($connection)) {
             $this->connection = Connection::instance();
