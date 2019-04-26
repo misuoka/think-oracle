@@ -6,7 +6,7 @@
  * @Licensed: MIT
  * @Version: 1.0.0
  * @Date: 2019-04-10 14:52:31
- * @LastEditTime: 2019-04-25 10:51:59
+ * @LastEditTime: 2019-04-26 13:54:38
  */
 
 namespace misuoka\think; //
@@ -198,7 +198,7 @@ class Oracle extends BaseConnection
         list($tableName) = explode(' ', $tableName);
         $tableNames      = explode('.', $tableName);
         $tableName       = isset($tableNames[1]) ? $tableNames[1] : $tableNames[0];
-        $sql             = sprintf("SELECT A.COLUMN_NAME,DATA_TYPE,DECODE (NULLABLE, 'Y', 0, 1) NOTNULL,DATA_DEFAULT,DECODE (A.COLUMN_NAME,B.COLUMN_NAME,1,0) PK FROM USER_TAB_COLUMNS A,(SELECT COLUMN_NAME FROM USER_CONSTRAINTS C,USER_CONS_COLUMNS COL WHERE C.CONSTRAINT_NAME = COL.CONSTRAINT_NAME AND C.CONSTRAINT_TYPE = 'P' AND C.TABLE_NAME = '%1\$s') B WHERE TABLE_NAME = '%1\$s' AND A .COLUMN_NAME = B.COLUMN_NAME (+)", strtoupper($tableName)); // 查询oracle数据表信息
+        $sql             = sprintf("SELECT A.COLUMN_NAME,DATA_TYPE,DECODE(NULLABLE, 'Y', 0, 1) NOTNULL,DATA_DEFAULT,DECODE(A.COLUMN_NAME,B.COLUMN_NAME,1,0) PK FROM USER_TAB_COLUMNS A,(SELECT COLUMN_NAME FROM USER_CONSTRAINTS C,USER_CONS_COLUMNS COL WHERE C.CONSTRAINT_NAME = COL.CONSTRAINT_NAME AND C.CONSTRAINT_TYPE = 'P' AND C.TABLE_NAME = '%1\$s') B WHERE TABLE_NAME = '%1\$s' AND A .COLUMN_NAME = B.COLUMN_NAME (+)", strtoupper($tableName)); // 查询oracle数据表信息
 
         $stmt   = $this->query($sql, [], false, true);
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -345,76 +345,6 @@ class Oracle extends BaseConnection
     {
         // 从字段映射表中，把oracle字段类型转换为PDO类型
         return $this->dataTypes[strtoupper($type)] ?? \PDO::PARAM_STR;
-    }
-
-    /**
-     * 获取数据表信息
-     * @access public
-     * @param  mixed  $tableName 数据表名 留空自动获取
-     * @param  string $fetch     获取信息类型 包括 fields type bind pk
-     * @return mixed
-     */
-    public function getTableInfo($tableName, $fetch = '')
-    {
-        if (is_array($tableName)) {
-            $tableName = key($tableName) ?: current($tableName);
-        }
-
-        if (strpos($tableName, ',')) {
-            // 多表不获取字段信息
-            return false;
-        } else {
-            $tableName = $this->parseSqlTable($tableName);
-        }
-
-        // 修正子查询作为表名的问题
-        if (strpos($tableName, ')')) {
-            return [];
-        }
-
-        list($tableName) = explode(' ', $tableName);
-
-        if (false === strpos($tableName, '.')) {
-            // $schema = $this->getConfig('database') . '.' . $tableName;
-            $schema = $this->getConfig('username') . '.' . $tableName; // oracle的数据库名即为用户名
-        } else {
-            $schema = $tableName;
-        }
-
-        if (!isset(self::$info[$schema])) {
-            // 读取缓存
-            $cacheFile = Container::get('app')->getRuntimePath() . 'schema' . DIRECTORY_SEPARATOR . $schema . '.php';
-
-            if (!$this->config['debug'] && is_file($cacheFile)) {
-                $info = include $cacheFile;
-            } else {
-                $info = $this->getFields($tableName);
-            }
-
-            $fields = array_keys($info);
-            $bind   = $type   = [];
-
-            foreach ($info as $key => $val) {
-                // 记录字段类型
-                $type[$key] = $val['type'];
-                $bind[$key] = $this->getFieldBindType($val['type']);
-
-                if (!empty($val['primary'])) {
-                    $pk[] = $key;
-                }
-            }
-
-            if (isset($pk)) {
-                // 设置主键
-                $pk = count($pk) > 1 ? $pk : $pk[0];
-            } else {
-                $pk = null;
-            }
-
-            self::$info[$schema] = ['fields' => $fields, 'type' => $type, 'bind' => $bind, 'pk' => $pk];
-        }
-
-        return $fetch ? self::$info[$schema][$fetch] : self::$info[$schema];
     }
 
     /**
@@ -807,33 +737,5 @@ class Oracle extends BaseConnection
     public function getLastInsID($sequence = null)
     {
         return $sequence ? $this->linkID->lastInsertId($sequence) : -1; // 没有序列名称，则返回最后ID为-1，避免自动获取报异常
-    }
-    /**
-     * 生成缓存标识
-     * @access protected
-     * @param  Query     $query   查询对象
-     * @param  mixed     $value   缓存数据
-     * @return string
-     */
-    protected function getCacheKey(\think\db\Query $query, $value)
-    {
-        if (is_scalar($value)) {
-            $data = $value;
-        } elseif (is_array($value) && isset($value[1], $value[2]) && in_array($value[1], ['=', 'eq'], true) && is_scalar($value[2])) {
-            $data = $value[2];
-        }
-
-        // $prefix = 'think:' . $this->getConfig('database') . '.';
-        $prefix = 'think:' . $this->getConfig('username') . '.'; // oracle的数据库名即为用户名
-
-        if (isset($data)) {
-            return $prefix . $query->getTable() . '|' . $data;
-        }
-
-        try {
-            return md5($prefix . serialize($query->getOptions()) . serialize($query->getBind(false)));
-        } catch (\Exception $e) {
-            throw new Exception('closure not support cache(true)');
-        }
     }
 }

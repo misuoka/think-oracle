@@ -6,7 +6,7 @@
  * @Licensed: MIT
  * @Version: 1.0.0
  * @Date: 2019-04-10 14:52:25
- * @LastEditTime: 2019-04-25 10:24:31
+ * @LastEditTime: 2019-04-26 16:05:58
  */
 
 namespace misuoka\think;  // 原命名空间为 think\oracle，但与官方的库存在冲突
@@ -25,8 +25,8 @@ class Builder extends BaseBuilder
 
     // SQL表达式
     protected $selectSql = 'SELECT%FORCE%%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%UNION%%ORDER% %LOCK%%COMMENT%';
-    // protected $selectSqlLimit = 'SELECT * FROM (SELECT tp_.*,ROWNUM AS RN FROM (SELECT%FORCE%%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%UNION%%ORDER%) tp_ ) %LIMIT%%COMMENT%'; 
-    protected $selectSqlLimit = 'SELECT * FROM (SELECT tp_.*,ROWNUM RN FROM (SELECT%FORCE%%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%UNION%%ORDER%) tp_%LIMIT_END%)%LIMIT_BEGIN%%COMMENT%'; // limit 专用 sql
+    // protected $selectSqlLimit = 'SELECT * FROM (SELECT thinkphp.*,ROWNUM AS RN FROM (SELECT%FORCE%%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%UNION%%ORDER%) thinkphp ) %LIMIT%%COMMENT%'; 
+    protected $selectSqlLimit = 'SELECT * FROM (SELECT thinkphp.*,ROWNUM RN FROM (SELECT%FORCE%%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%UNION%%ORDER%) thinkphp%LIMIT_END%)%LIMIT_BEGIN%%COMMENT%'; // limit 专用 sql
     // SELECT * FROM 
     // (    
     //     SELECT thinkphp.*,ROWNUM RN FROM (  ) thinkphp WHERE ROWNUM <= 
@@ -42,7 +42,63 @@ class Builder extends BaseBuilder
     // protected $deleteSql = 'DELETE FROM %TABLE%%USING%%JOIN%%WHERE%%ORDER%%LIMIT% %LOCK%%COMMENT%';
     protected $deleteSql = 'DELETE FROM %TABLE%%USING%%JOIN%%WHERE%%ORDER% %COMMENT%';
 
+    /**
+     * 字段和表名处理
+     * @access public
+     * @param  Query     $query 查询对象
+     * @param  mixed     $key   字段名
+     * @param  bool      $strict 严格检测
+     * @return string
+     */
+    public function parseKey(\think\db\Query $query, $key, $strict = false)
+    {
+        if (is_numeric($key)) {
+            return $key;
+        } elseif ($key instanceof Expression) {
+            return $key->getValue();
+        }
 
+        $key = trim($key);
+
+        if (strpos($key, '->') && false === strpos($key, '(')) {
+            // JSON字段支持
+            list($field, $name) = explode('->', $key, 2);
+
+            return 'json_extract(' . $this->parseKey($query, $field, true) . ', \'$.' . str_replace('->', '.', $name) . '\')';
+        } elseif (strpos($key, '.') && !preg_match('/[,\'\"\(\)`\s]/', $key)) {
+            list($table, $key) = explode('.', $key, 2);
+
+            $alias = $query->getOptions('alias');
+
+            if ('__TABLE__' == $table) {
+                $table = $query->getOptions('table');
+                $table = is_array($table) ? array_shift($table) : $table;
+            }
+
+            if (isset($alias[$table])) {
+                $table = $alias[$table];
+            }
+        }
+
+        if ($strict && !preg_match('/^[\w\.\*]+$/', $key)) {
+            throw new Exception('not support data:' . $key);
+        }
+
+        if ('*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+            $key = '"' . strtoupper($key) . '"';
+        }
+
+        if (isset($table)) {
+            if (strpos($table, '.')) {
+                $table = str_replace('.', '"."', strtoupper($table));
+            }
+
+            $key = '' . $table . '.' . $key;
+        }
+
+        return $key;
+    }
+    
     /**
      * 时间范围查询 TODO:
      * @access protected
@@ -145,17 +201,17 @@ class Builder extends BaseBuilder
      * @param [type] $limit
      * @return void
      */
-    protected function limitRowsCount($limit)
-    {
-        $limit = explode(',', $limit);
-        if (count($limit) > 1) {
-            $limit = $limit[1] - $limit[0];
-        } else {
-            $limit = $limit[0];
-        }
+    // protected function limitRowsCount($limit)
+    // {
+    //     $limit = explode(',', $limit);
+    //     if (count($limit) > 1) {
+    //         $limit = $limit[1] - $limit[0];
+    //     } else {
+    //         $limit = $limit[0];
+    //     }
 
-        return $limit;
-    }
+    //     return $limit;
+    // }
 
     /**
      * 获取limit的起始范围（针对Oracle分页特性，选择高效的分页方式）

@@ -1,7 +1,7 @@
 <?php
-// require_once diROLE_NAME(__FILE__) . "/../vendor/autoload.php";
-require_once diROLE_NAME(__FILE__) . '/../vendor/topthink/framework/base.php';
-$myconfig = require diROLE_NAME(__FILE__) . '/../database.php';  // 加载数据库配置
+
+require_once dirname(__FILE__) . '/../vendor/topthink/framework/base.php';
+$myconfig = require dirname(__FILE__) . '/../database.php';  // 加载数据库配置
 
 use PHPUnit\Framework\TestCase;
 use think\Db;
@@ -40,7 +40,7 @@ class SelectTest extends TestCase
     {
         global $config;
 
-        $res = Db::connect($config)->table('mdb_role')->where('rid', 6)->find();
+        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 6)->find();
         $this->assertNotNull($res);
         $this->assertNotEmpty($res);
         $this->assertArrayHasKey('ROLE_NAME', $res);
@@ -58,14 +58,14 @@ class SelectTest extends TestCase
         $this->expectException('think\db\exception\DataNotFoundException');
         $this->expectExceptionMessage('table data not Found:mdbtb_role');
 
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1)->findOrFail();
+        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1000)->findOrFail();
     }
 
     public function testFindOrEmpty()
     {
         global $config;
 
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1)->findOrEmpty();
+        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1000)->findOrEmpty();
         $this->assertEmpty($res);
     }
 
@@ -79,7 +79,7 @@ class SelectTest extends TestCase
         $res = Db::connect($config)->name('role')->where('rid', 13)->select();
         $this->assertCount(1, $res);
         $this->assertArrayHasKey('ROLE_NAME', $res[0]);
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1)->select();
+        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1000)->select();
         $this->assertEmpty($res);
     }
 
@@ -89,18 +89,17 @@ class SelectTest extends TestCase
 
         $this->expectException('think\db\exception\DataNotFoundException');
         $this->expectExceptionMessage('table data not Found:mdbtb_role');
-
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1)->selectOrFail();
-        $res = Db::connect($config)->name('role')->where('rid', 1)->selectOrFail();
+        // $res = Db::connect($config)->table('mdbtb_role')->where('RID', 1000)->select(false);
+        $res = Db::connect($config)->table('mdbtb_role')->where('RID', 1000)->selectOrFail();
     }
 
     public function testValue()
     {
         global $config;
 
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 13)->value('ROLE_NAME');
+        $res = Db::connect($config)->table('mdbtb_role')->where('RID', 13)->value('ROLE_NAME');
         $this->assertNotEmpty($res);
-        $res = Db::connect($config)->table('mdbtb_role')->where('rid', 1)->value('ROLE_NAME');
+        $res = Db::connect($config)->table('mdbtb_role')->where('RID', 500)->value('ROLE_NAME');
         $this->assertNull($res);
     }
 
@@ -116,5 +115,13 @@ class SelectTest extends TestCase
         $this->assertNotEmpty($res);
         $res = Db::connect($config)->table('mdbtb_role')->where('rid', 13)->column('*','RID'); // ok
         $this->assertNotEmpty($res);
+    }
+
+    public function testCount()
+    {
+        global $config;
+
+        $res = Db::connect($config)->name('menu')->whereNotNull('UPDATE_TIME')->count();
+        $this->assertEquals(2, $res);
     }
 }
