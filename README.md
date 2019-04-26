@@ -11,14 +11,16 @@
 
 ## 使用方法
 
-在 thinkphp5.1 的数据库配置文件 database.php 中，进行如下填写：
+使用 composer 进行安装 `composer require misuoka/think-oracle`
+
+安装完成后，在 thinkphp5.1 的数据库配置文件 database.php 中，进行如下配置：
 
 ```php
 $config = [
     // 数据库类型
     'type'            => '\misuoka\think\Oracle',
     // Query类
-    'query'           => '\misuoka\think\Query', 
+    'query'           => '\misuoka\think\Query',  // 如果是在 database.php 中配置，不需要填写此项，但如果是这种用法 Db::connect($config)，请填写此项
     // 服务器地址
     'hostname'        => '', // 填写数据库 IP 地址
     // 数据库名
