@@ -6,7 +6,7 @@
  * @Licensed: MIT
  * @Version: 1.0.0
  * @Date: 2019-04-10 14:52:25
- * @LastEditTime: 2019-04-26 16:05:58
+ * @LastEditTime: 2019-04-26 16:29:24
  */
 
 namespace misuoka\think;  // 原命名空间为 think\oracle，但与官方的库存在冲突
@@ -93,7 +93,7 @@ class Builder extends BaseBuilder
                 $table = str_replace('.', '"."', strtoupper($table));
             }
 
-            $key = '' . $table . '.' . $key;
+            $key = '"' . $table . '".' . $key;
         }
 
         return $key;

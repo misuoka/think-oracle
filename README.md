@@ -16,7 +16,9 @@
 ```php
 $config = [
     // 数据库类型
-    'type'            => '\\misuoka\\think\Oracle',
+    'type'            => '\misuoka\think\Oracle',
+    // Query类
+    'query'           => '\misuoka\think\Query', 
     // 服务器地址
     'hostname'        => '', // 填写数据库 IP 地址
     // 数据库名
@@ -37,10 +39,6 @@ $config = [
     'prefix'          => '',
     // 自增序列名前缀（新增的，针对 Oracle 特有的）
     'prefix_sequence' => '',
-    // Builder类
-    'builder'         => '', // 可不填，若填则为：\\misuoka\\think\\Builder
-    // Query类
-    'query'           => '', // 可不填，若填则为：\\misuoka\\think\\Query
 ];
 ```
 
