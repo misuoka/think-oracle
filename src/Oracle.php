@@ -439,8 +439,8 @@ class Oracle extends BaseConnection
         $this->PDOStatement = $this->linkID->prepare($sql);
 
         // 是否为存储过程调用
-        // $procedure = in_array(strtolower(substr(trim($sql), 0, 4)), ['call', 'exec']);
-        $procedure = strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle 存储过程判断
+        $procedure = in_array(strtolower(substr(trim($sql), 0, 4)), ['call', 'exec']);
+        $procedure = $procedure || strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle 另一种存储过程判断
 
         // 参数绑定
         if ($procedure) {
@@ -508,7 +508,8 @@ class Oracle extends BaseConnection
 
             // 是否为存储过程调用
             // BEGIN PROC_TEST(:id, :name); END;
-            $procedure = strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle存储过程判断
+            $procedure = in_array(strtolower(substr(trim($sql), 0, 4)), ['call', 'exec']);
+            $procedure = $procedure || strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle存储过程判断
 
             // 参数绑定
             if ($procedure) {
@@ -580,7 +581,8 @@ class Oracle extends BaseConnection
             $this->PDOStatement = $this->linkID->prepare($sql);
 
             // 是否为存储过程调用
-            $procedure = strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle存储过程判断
+            $procedure = in_array(strtolower(substr(trim($sql), 0, 4)), ['call', 'exec']);
+            $procedure = $procedure || strtolower(substr(trim($sql), 0, 5)) === 'begin'; // oracle存储过程判断
 
             // 参数绑定
             if ($procedure) {

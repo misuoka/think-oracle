@@ -160,7 +160,7 @@ class CreateTest extends TestCase
     {
         global $myconfig;
 
-        $sql = "SELECT SEQUENCE_NAME FROM dba_sequences WHERE sequence_owner = '" . strtoupper($myconfig['username']) . "'";
+        $sql = "SELECT SEQUENCE_NAME FROM user_sequences";
         $stmt = self::$pdo->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
