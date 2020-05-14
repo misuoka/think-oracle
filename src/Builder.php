@@ -114,6 +114,8 @@ class Builder extends Oracle
             $marks     = $tableName ? $tableName != $key : true; // 表名，默认不加双引号
         }
 
+        // 严格检测时，把 " 去掉，避免where条件中加入驼峰式字段("myPkId")而导致抛出异常，舍弃
+        // if ($strict && !preg_match('/^[\w\.\*]+$/', str_replace('"', '', $key))) {
         if ($strict && !preg_match('/^[\w\.\*]+$/', $key)) {
             throw new Exception('not support data:' . $key);
         }

@@ -107,6 +107,39 @@ class Oracle extends ThinkOracle
     }
 
     /**
+     * 取得数据表的字段信息
+     * @access public
+     * @param string $tableName
+     * @return array
+     */
+    public function getFields(string $tableName): array
+    {
+        [$tableName] = explode(' ', $tableName);
+        $sql         = "select a.column_name,data_type,DECODE (nullable, 'Y', 0, 1) notnull,data_default, DECODE (A .column_name,b.column_name,1,0) pk from all_tab_columns a,(select column_name from all_constraints c, all_cons_columns col where c.constraint_name = col.constraint_name and c.constraint_type = 'P' and c.table_name = '" . strtoupper($tableName) . "' ) b where table_name = '" . strtoupper($tableName) . "' and a.column_name = b.column_name (+)";
+
+        $pdo    = $this->getPDOStatement($sql);
+        $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
+        $info   = [];
+
+        if ($result) {
+            foreach ($result as $key => $val) {
+                $val = array_change_key_case($val);
+
+                $info[$val['column_name']] = [
+                    'name'    => $val['column_name'],
+                    'type'    => $val['data_type'],
+                    'notnull' => $val['notnull'],
+                    'default' => $val['data_default'],
+                    'primary' => $val['pk'],
+                    'autoinc' => $val['pk'] && $val['data_type'] == 'number' ? 1 : 0, // 根据字段类型来确定，字符串主键哪来都自增
+                ];
+            }
+        }
+
+        return $this->fieldCase($info);
+    }
+
+    /**
      * 获取最近插入的ID
      * @access public
      * @param BaseQuery $query    查询对象
@@ -187,5 +220,38 @@ class Oracle extends ThinkOracle
         }
 
         return $result;
+    }
+
+    /**
+     * 存储过程的输入输出参数绑定
+     * @access public
+     * @param array $bind 要绑定的参数列表
+     * @return void
+     * @throws BindParamException
+     */
+    protected function bindParam(array $bind): void
+    {
+        foreach ($bind as $key => $val) {
+            $param = is_numeric($key) ? $key + 1 : ':' . $key;
+
+            if (is_array($val)) {
+                $result = $this->PDOStatement->bindParam($param, $bind[$key][0], $bind[$key][1], $bind[$key][2] ?? -1);
+                // array_unshift($val, $param);
+                // $result = call_user_func_array([$this->PDOStatement, 'bindParam'], $val); // 不支持不能引用的参数
+            } else {
+                $result = $this->PDOStatement->bindValue($param, $val);
+            }
+
+            if (!$result) {
+                $param = array_shift($val);
+
+                throw new BindParamException(
+                    "Error occurred  when binding parameters '{$param}'",
+                    $this->config,
+                    $this->getLastsql(),
+                    $bind
+                );
+            }
+        }
     }
 }
