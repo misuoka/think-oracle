@@ -5,7 +5,7 @@
 
 本库使用基于 OCI API 封装的 PDO 接口数据库驱动 [misuoka\ocipdo](https://github.com/misuoka/ocipdo)，用来对 Oracle 数据库进行操作。
 
-根据 Oracle 数据库的特性，对 thinkphp5.1 的数据库访问层进行稍作修改，使之适用于 Oracle 数据库，以便在 thinkphp5.1 框架中以其原有方式完美操作 Oracle 数据库。
+根据 Oracle 数据库的特性，对 thinkphp6 的数据库访问层进行稍作修改，使之适用于 Oracle 数据库，以便在 thinkphp6 框架中以其原有方式完美操作 Oracle 数据库。如果你使用的是 thinkphp5.1 框架，请安装 1.x.x 版本。
 
 > 有关 PDO_OCI 字符截断问题的链接：https://my.oschina.net/startphp/blog/195333
 
