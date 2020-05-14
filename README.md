@@ -38,7 +38,7 @@ $config = [
             'charset'         => 'utf8',
             // 数据库表前缀
             'prefix'          => '',
-            // 自增序列名前缀（新增的，针对 Oracle 特有的），除前缀外，名称与表名一致。如果不是，请在新增数据时使用 sequence 设置序列
+            // 自增序列名前缀（新增的，针对 Oracle 特有的），除前缀外，名称与表名一致。如果不是，请在新增数据时使用 sequence 方法设置序列
             'prefix_sequence' => '',
         ],
     ],
@@ -61,7 +61,7 @@ $config = [
 
 ## thinkphp5.1 上安装方式
 
-使用 composer 进行安装 `composer require misuoka/think-oracle v1.1.2`
+使用 composer 进行安装 `composer require misuoka/think-oracle 1.x`
 
 安装完成后，在 thinkphp6 的数据库配置文件 database.php 中，进行如下配置：
 
