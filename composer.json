@@ -1,0 +1,26 @@
+{
+    "name": "misuoka/think-oracle",
+    "description": "用于 thinkphp6 框架上的基于 OCI 的 Oracle 数据库驱动。thinkphp5.1 请使用 1.0 版本",
+    "keywords": ["oracle", "oci", "pdo", "pdo_oci", "thinkphp", "thihnkphp5", "thinkphp6", "topthink", "think-oracle", "think-oci"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "misuoka",
+            "email": "125158612@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "topthink/think-orm": "~2.0",
+        "misuoka/ocipdo": "~0.1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "misuoka\\think\\" : "src"
+        }
+    }
+}
