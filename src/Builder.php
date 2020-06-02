@@ -111,7 +111,7 @@ class Builder extends Oracle
             }
         } else {
             $tableName = $query->getOptions('table');
-            $marks     = $tableName ? $tableName != $key : true; // 表名，默认不加双引号
+            // $marks     = $tableName ? $tableName != $key : true; // 表名，默认不加双引号
         }
 
         // 严格检测时，把 " 去掉，避免where条件中加入驼峰式字段("myPkId")而导致抛出异常，舍弃
@@ -120,18 +120,21 @@ class Builder extends Oracle
             throw new Exception('not support data:' . $key);
         }
 
-        if ($marks && '*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+        // if ($marks && '*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
+        if ('*' != $key && !preg_match('/[,\'\"\*\(\)`.\s]/', $key)) {
             // $key = '"' . $key . '"'; 
             $key = '"' . strtoupper($key) . '"';
         }
 
         if (isset($table)) {
-            if (strpos($table, '.')) {
-                // $table = str_replace('.', '"."', $table);
-                $table = str_replace('.', '"."', strtoupper($table));
-            }
+            // 这里出现问题，table并没有带有 . 
+            // if (strpos($table, '.')) {
+            //     // $table = str_replace('.', '"."', $table);
+            //     $table = str_replace('.', '"."', strtoupper($table));
+            // }
 
-            $key = '"' . $table . '".' . $key;
+            // $key = '"' . $table . '".' . $key;
+            $key = '"' . strtoupper($table) . '".' . $key;
         }
 
         return $key;
