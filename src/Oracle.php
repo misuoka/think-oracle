@@ -24,66 +24,6 @@ use think\db\exception\PDOException;
 class Oracle extends ThinkOracle
 {
     /**
-     * 连接数据库方法
-     * @access public
-     * @param array      $config         连接参数
-     * @param integer    $linkNum        连接序号
-     * @param array|bool $autoConnection 是否自动连接主数据库（用于分布式）
-     * @return PDO
-     * @throws PDOException
-     */
-    public function connect(array $config = [], $linkNum = 0, $autoConnection = false): PDO
-    {
-        if (isset($this->links[$linkNum])) {
-            return $this->links[$linkNum];
-        }
-
-        if (empty($config)) {
-            $config = $this->config;
-        } else {
-            $config = array_merge($this->config, $config);
-        }
-
-        // 连接参数
-        if (isset($config['params']) && is_array($config['params'])) {
-            $params = $config['params'] + $this->params;
-        } else {
-            $params = $this->params;
-        }
-
-        // 记录当前字段属性大小写设置
-        $this->attrCase = $params[PDO::ATTR_CASE];
-
-        if (!empty($config['break_match_str'])) {
-            $this->breakMatchStr = array_merge($this->breakMatchStr, (array) $config['break_match_str']);
-        }
-
-        try {
-            if (empty($config['dsn'])) {
-                $config['dsn'] = $this->parseDsn($config);
-            }
-
-            $startTime = microtime(true);
-
-            $this->links[$linkNum] = new OCIPDO($config['dsn'], $config['username'], $config['password'], $params); // 连接 oracle pdo => misuoka/ocipdo
-
-            // SQL监控
-            if (!empty($config['trigger_sql'])) {
-                $this->trigger('CONNECT:[ UseTime:' . number_format(microtime(true) - $startTime, 6) . 's ] ' . $config['dsn']);
-            }
-
-            return $this->links[$linkNum];
-        } catch (\PDOException $e) {
-            if ($autoConnection) {
-                $this->db->log($e->getMessage(), 'error');
-                return $this->connect($autoConnection, $linkNum);
-            } else {
-                throw $e;
-            }
-        }
-    }
-
-    /**
      * 获取当前连接器类对应的Builder类
      * @access public
      * @return string
@@ -131,7 +71,7 @@ class Oracle extends ThinkOracle
                     'notnull' => $val['notnull'],
                     'default' => $val['data_default'],
                     'primary' => $val['pk'],
-                    'autoinc' => $val['pk'] && $val['data_type'] == 'number' ? 1 : 0, // 根据字段类型来确定，字符串主键哪来都自增
+                    'autoinc' => $val['pk'] && in_array($val['data_type'], ['integer', 'number', 'int', 'smallint']) ? 1 : 0, // 根据字段类型来确定，字符串主键哪来都自增
                 ];
             }
         }
@@ -195,7 +135,7 @@ class Oracle extends ThinkOracle
         $sql = $this->builder->insert($query);
 
         // 执行操作
-        $result = '' == $sql ? 0 : $this->execute($query, $sql, $query->getBind());
+        $result = '' == $sql ? 0 : $this->pdoExecute($query, $sql, $query->getBind());
 
         if ($result) {
             $sequence  = $this->getSequence($query, $options);  // 改变获取 sequence 的方式

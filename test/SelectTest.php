@@ -107,4 +107,21 @@ class SelectTest extends TestCase
         $res = \think\facade\Db::connect('oci')->name('menu')->whereNotNull('UPDATE_TIME')->count();
         $this->assertEquals(2, $res);
     }
+
+    public function testChunk()
+    {
+        \think\facade\Db::connect('oci')->table('mdbtb_user')->chunk(100, function($users) {
+            foreach ($users as $user) {
+                $this->assertArrayHasKey('USERNAME', $user);
+            }
+        });
+    }
+
+    public function testCursor()
+    {
+        $cursor = \think\facade\Db::connect('oci')->table('mdbtb_user')->where('STATUS', 1)->cursor();
+        foreach ($cursor as $user) {
+            $this->assertArrayHasKey('USERNAME', $user);
+        }
+    }
 }
