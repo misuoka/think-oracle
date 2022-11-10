@@ -5,3 +5,4 @@ log/
 vendor/
 oldtest/
 composer.lock
+.gitconfig
