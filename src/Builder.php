@@ -32,7 +32,7 @@ class Builder extends Oracle
         $bind = $query->getFieldsBindType();
 
         // 获取合法的字段
-        if ('*' == $options['field']) {
+        if (empty($options['field']) || '*' == $options['field']) {
             $allowFields = array_keys($bind);
         } else {
             $allowFields = $options['field'];
